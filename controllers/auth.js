@@ -1,16 +1,37 @@
-const { validationResult } = require("express-validator");
+const { hashPass, comparePasswords } = require("../helpers/bycript_methods");
+const Usuario = require("../models/User");
 
-const createUser = (req, res) => {
-  const { name, email, password } = req.body;
-
-  res
-    .status(201)
-    .json({ ok: true, msg: "Register", user: { name, email, password } });
+const createUser = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    let checkUser = await Usuario.findOne({ email });
+    if (checkUser) {
+      return res.status(400).json({ ok: false, msg: "Email NOT avalible!" });
+    }
+    const user = new Usuario(req.body);
+    user.password = hashPass(password);
+    await user.save();
+    res.status(201).json({ ok: true, uid: user._id });
+  } catch (error) {
+    res.status(500).json({ ok: false, msg: "Call Admin!" });
+  }
 };
 
-const login = (req, res) => {
+const login = async (req, res) => {
   const { email, password } = req.body;
-  res.json({ ok: true, msg: "Login", user: { email, password } });
+  try {
+    let checkUser = await Usuario.findOne({ email });
+    if (!checkUser) {
+      return res.status(400).json({ ok: false, msg: "User not exists" });
+    }
+    if (!comparePasswords(checkUser.password, password)) {
+      return res.status(400).json({ ok: false, msg: "Password invalid" });
+    }
+
+    res.status(200).json({ ok: true, msg: "token!" });
+  } catch (error) {
+    res.status(500).json({ ok: false, msg: "Call Admin!" });
+  }
 };
 
 const renewToken = (req, res) => {
