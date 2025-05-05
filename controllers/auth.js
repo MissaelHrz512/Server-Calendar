@@ -1,4 +1,5 @@
 const { hashPass, comparePasswords } = require("../helpers/bycript_methods");
+const { generateJWT } = require("../helpers/JWT_methods");
 const Usuario = require("../models/User");
 
 const createUser = async (req, res) => {
@@ -28,7 +29,9 @@ const login = async (req, res) => {
       return res.status(400).json({ ok: false, msg: "Password invalid" });
     }
 
-    res.status(200).json({ ok: true, msg: "token!" });
+    const token = await generateJWT(checkUser.id,checkUser.name)
+
+    res.status(200).json({ ok: true, msg: token });
   } catch (error) {
     res.status(500).json({ ok: false, msg: "Call Admin!" });
   }
