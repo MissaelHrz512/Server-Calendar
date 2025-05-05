@@ -1,9 +1,11 @@
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
-
+const conn = require("./database/config")
 
 app.use(express.static("public"));
+
+conn()
 
 app.use(morgan("dev"));
 
