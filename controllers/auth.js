@@ -29,7 +29,7 @@ const login = async (req, res) => {
       return res.status(400).json({ ok: false, msg: "Password invalid" });
     }
 
-    const token = await generateJWT(checkUser.id,checkUser.name)
+    const token = await generateJWT(checkUser.id, checkUser.name);
 
     res.status(200).json({ ok: true, msg: token });
   } catch (error) {
@@ -37,8 +37,10 @@ const login = async (req, res) => {
   }
 };
 
-const renewToken = (req, res) => {
-  res.json({ ok: true, msg: "renew" });
+const renewToken = async (req, res) => {
+  const { uid, name } = req.user;
+  const refreshToken = await generateJWT(uid, name);
+  res.json({ ok: true, refreshToken: refreshToken });
 };
 
 module.exports = {

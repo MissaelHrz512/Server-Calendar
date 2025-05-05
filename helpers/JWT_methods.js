@@ -6,9 +6,18 @@ const generateJWT = async (uid, name) => {
       expiresIn: "2h",
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     throw new Error("Call Admin!");
   }
 };
 
-module.exports = { generateJWT };
+const validateToken = async (token) => {
+  try {
+    return await jwt.verify(token, process.env.JWT_SECRET);
+  } catch (error) {
+    console.log(error);
+    throw new Error("Call Admin!");
+  }
+};
+
+module.exports = { generateJWT, validateToken };
