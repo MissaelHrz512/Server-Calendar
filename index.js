@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const conn = require("./database/config")
+const cors = require("cors")
+app.use(cors())
 
 app.use(express.static("public"));
 
