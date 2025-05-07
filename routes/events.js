@@ -13,11 +13,21 @@ const {
 } = require("../controllers/events");
 const validateJWT = require("../middlewares/validateJWT");
 const router = express.Router();
+const {
+  titleValidator,
+  startValiator,
+  endValiator,
+} = require("../middlewares/validators");
+const { validateFields } = require("../middlewares/validateFields");
 
 router.use(validateJWT);
 
 router.get("/", getEvents);
-router.post("/", createEvent);
+router.post(
+  "/",
+  [titleValidator, startValiator, endValiator, validateFields],
+  createEvent
+);
 router.put("/:id", updateEvent);
 router.delete("/:id", deleteEvent);
 
